@@ -1,0 +1,118 @@
+[
+  {
+    "student_id": "23A91A0501",
+    "student_name": "Rahul Kumar",
+    "parent_name": "Suresh Kumar",
+    "parent_mobile": "+919876544582",
+    "attendance": {
+      "percentage": 91,
+      "attended": 109,
+      "held": 120
+    },
+    "coding": {
+      "score": 76,
+      "assigned": 50,
+      "completed": 38,
+      "previous_week_score": 68,
+      "strong_topics": [
+        "Arrays",
+        "Strings"
+      ],
+      "weak_topics": [
+        "Dynamic Programming",
+        "Graphs"
+      ]
+    },
+    "training": {
+      "percentage": 94,
+      "attended": 47,
+      "held": 50
+    },
+    "campus": {
+      "present_today": true,
+      "entry_time": "09:12 AM",
+      "previous_day_entry_time": "09:26 AM",
+      "regularity_score": 95
+    },
+    "mentor": {
+      "name": "M. Ashok"
+    }
+  },
+  {
+    "student_id": "23A91A0502",
+    "student_name": "Anjali Devi",
+    "parent_name": "Lakshmi Devi",
+    "parent_mobile": "+919900001234",
+    "attendance": {
+      "percentage": 84,
+      "attended": 101,
+      "held": 120
+    },
+    "coding": {
+      "score": 69,
+      "assigned": 50,
+      "completed": 33,
+      "previous_week_score": 70,
+      "strong_topics": [
+        "Strings"
+      ],
+      "weak_topics": [
+        "Recursion",
+        "Trees"
+      ]
+    },
+    "training": {
+      "percentage": 88,
+      "attended": 44,
+      "held": 50
+    },
+    "campus": {
+      "present_today": true,
+      "entry_time": "09:31 AM",
+      "previous_day_entry_time": "09:18 AM",
+      "regularity_score": 87
+    },
+    "mentor": {
+      "name": "B. Rajesh"
+    }
+  },
+  {
+    "student_id": "23A91A0503",
+    "student_name": "Kiran Reddy",
+    "parent_name": "Ramesh Reddy",
+    "parent_mobile": "+919811112222",
+    "attendance": {
+      "percentage": 73,
+      "attended": 88,
+      "held": 120
+    },
+    "coding": {
+      "score": 58,
+      "assigned": 50,
+      "completed": 26,
+      "previous_week_score": 54,
+      "strong_topics": [
+        "Basic Arrays"
+      ],
+      "weak_topics": [
+        "Two Pointers",
+        "Recursion",
+        "Dynamic Programming"
+      ]
+    },
+    "training": {
+      "percentage": 76,
+      "attended": 38,
+      "held": 50
+    },
+    "campus": {
+      "present_today": false,
+      "entry_time": null,
+      "previous_day_entry_time": "09:44 AM",
+      "regularity_score": 74
+    },
+    "mentor": {
+      "name": "G. Durga Sai Prasad"
+    }
+  }
+]
