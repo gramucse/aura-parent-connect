@@ -3,8 +3,13 @@ import os
 from fastapi import FastAPI, HTTPException, Header
 from dotenv import load_dotenv
 
-from .models import VerifyRequest, ExplainRequest, CallbackRequest, RetellToolRequest
-from .store import get_student, verify_parent, safe_summary, create_callback
+from .models import (
+    VerifyRequest,
+    ExplainRequest,
+    CallbackRequest,
+    RetellToolRequest,
+    RetellEnvelope,
+)
 from .gemini_service import explain
 
 load_dotenv()
@@ -70,11 +75,30 @@ def api_callback(payload: CallbackRequest):
 # Protect these with X-AURA-API-Key. Configure the same header in Retell.
 
 @app.post("/tools/verify-parent")
-def tool_verify_parent(payload: RetellToolRequest, x_aura_api_key: str | None = Header(default=None)):
+def tool_verify_parent(
+    payload: RetellEnvelope,
+    x_aura_api_key: str | None = Header(default=None)
+):
     require_tool_key(x_aura_api_key)
+
+    data = payload.args
+
+    student_id = data.get("student_id")
+    caller_number = data.get("caller_number")
+    parent_mobile_last4 = data.get("parent_mobile_last4")
+
+    if not student_id:
+        return {
+            "verified": False,
+            "message": "Student registration number was not received."
+        }
+
     ok, message, student = verify_parent(
-        payload.student_id, payload.caller_number, payload.parent_mobile_last4
+        student_id,
+        caller_number,
+        parent_mobile_last4
     )
+
     return {
         "verified": ok,
         "message": message,
