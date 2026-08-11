@@ -1,6 +1,7 @@
 \
 from pydantic import BaseModel, Field
 from typing import Optional
+from typing import Any
 
 class VerifyRequest(BaseModel):
     student_id: str
@@ -24,3 +25,9 @@ class RetellToolRequest(BaseModel):
     question: Optional[str] = None
     language: str = "auto"
     concern: Optional[str] = None
+
+
+class RetellEnvelope(BaseModel):
+    call: dict[str, Any] | None = None
+    name: str | None = None
+    args: dict[str, Any] = {}
