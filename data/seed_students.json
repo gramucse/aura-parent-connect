@@ -1,0 +1,88 @@
+[
+  {
+    "student_id": "23A91A0501",
+    "student_name": "Rahul Kumar",
+    "parent_name": "Suresh Kumar",
+    "parent_mobile": "+919876544582",
+    "mentor_name": "M. Ashok",
+    "attendance_percentage": 91,
+    "attendance_attended": 109,
+    "attendance_held": 120,
+    "coding_score": 76,
+    "coding_assigned": 50,
+    "coding_completed": 38,
+    "coding_previous_week": 68,
+    "strong_topics": [
+      "Arrays",
+      "Strings"
+    ],
+    "weak_topics": [
+      "Dynamic Programming",
+      "Graphs"
+    ],
+    "training_percentage": 94,
+    "training_attended": 47,
+    "training_held": 50,
+    "present_today": true,
+    "entry_time": "09:12 AM",
+    "previous_day_entry_time": "09:26 AM",
+    "campus_regularity_score": 95
+  },
+  {
+    "student_id": "23A91A0502",
+    "student_name": "Anjali Devi",
+    "parent_name": "Lakshmi Devi",
+    "parent_mobile": "+919900001234",
+    "mentor_name": "B. Rajesh",
+    "attendance_percentage": 84,
+    "attendance_attended": 101,
+    "attendance_held": 120,
+    "coding_score": 69,
+    "coding_assigned": 50,
+    "coding_completed": 33,
+    "coding_previous_week": 70,
+    "strong_topics": [
+      "Strings"
+    ],
+    "weak_topics": [
+      "Recursion",
+      "Trees"
+    ],
+    "training_percentage": 88,
+    "training_attended": 44,
+    "training_held": 50,
+    "present_today": true,
+    "entry_time": "09:31 AM",
+    "previous_day_entry_time": "09:18 AM",
+    "campus_regularity_score": 87
+  },
+  {
+    "student_id": "23A91A0503",
+    "student_name": "Kiran Reddy",
+    "parent_name": "Ramesh Reddy",
+    "parent_mobile": "+919811112222",
+    "mentor_name": "G. Durga Sai Prasad",
+    "attendance_percentage": 73,
+    "attendance_attended": 88,
+    "attendance_held": 120,
+    "coding_score": 58,
+    "coding_assigned": 50,
+    "coding_completed": 26,
+    "coding_previous_week": 54,
+    "strong_topics": [
+      "Basic Arrays"
+    ],
+    "weak_topics": [
+      "Two Pointers",
+      "Recursion",
+      "Dynamic Programming"
+    ],
+    "training_percentage": 76,
+    "training_attended": 38,
+    "training_held": 50,
+    "present_today": false,
+    "entry_time": null,
+    "previous_day_entry_time": "09:44 AM",
+    "campus_regularity_score": 74
+  }
+]

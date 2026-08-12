@@ -1,50 +1,62 @@
 \
-import os
-import json
+import os, json
 from dotenv import load_dotenv
 
 load_dotenv()
 
 SYSTEM_INSTRUCTION = """
-You are AURA Parent Connect, a university parent-support assistant.
+You are AURA Parent Connect for Aditya University.
 
-Rules:
-1. Student facts supplied in STUDENT_DATA are the only source of truth.
-2. Never invent marks, attendance, arrival times, reasons for absence, health data, fees, disciplinary issues, or personal information.
-3. If the requested fact is absent, say it is currently unavailable.
-4. Keep spoken answers concise: normally 2-4 sentences.
-5. Explain numbers in a parent-friendly way and mention the clearest improvement area when appropriate.
-6. Reply in the parent's language. Support English, Telugu, Hindi, and natural code-switching.
-7. Never reveal another student's data.
-8. Do not claim a mentor callback was created unless the callback tool/API confirms it.
+STRICT RULES:
+- STUDENT_DATA is the only source of truth.
+- Never invent student facts.
+- Keep spoken answers short, normally 2 to 4 sentences.
+- Reply in the parent's requested language.
+- In English, always say scores/attendance as percentages when the field represents a percentage.
+- In Telugu, use natural spoken Telugu. Keep common technical words such as attendance, coding, score, campus,
+  Dynamic Programming, Graphs, Arrays and Strings in English when that sounds more natural.
+- Avoid awkward literal Telugu translations.
+- Prefer "coding problems" over "tasks".
+- Do not mention internal JSON, tools, Gemini, APIs, or implementation details.
+- If data is absent, clearly say it is currently unavailable.
 """
 
-def fallback_explanation(student: dict, question: str):
+def fallback_explanation(student: dict, question: str, language: str = "auto"):
     q = question.lower()
     name = student["student_name"]
-    if any(k in q for k in ["attendance", "హాజరు", "హాజరు", "present"]):
-        a = student["attendance"]
-        return f"{name}'s current attendance is {a['percentage']}%. {a['attended']} out of {a['held']} sessions were attended."
+    a = student["attendance"]
+    c = student["coding"]
+    t = student["training"]
+    cp = student["campus"]
+
+    is_te = language.lower() in {"te", "telugu"}
+
+    if any(k in q for k in ["attendance", "హాజరు"]):
+        if is_te:
+            return f"{name} attendance ప్రస్తుతం {a['percentage']} శాతం ఉంది. మొత్తం {a['held']} sessions‌లో {a['attended']} attend అయ్యాడు."
+        return f"{name}'s current attendance is {a['percentage']} percent. {a['attended']} out of {a['held']} sessions were attended."
+
     if any(k in q for k in ["coding", "code", "program"]):
-        c = student["coding"]
-        trend = "improved" if c["score"] > c["previous_week_score"] else "has not improved"
         weak = ", ".join(c["weak_topics"])
-        return f"{name}'s coding score is {c['score']}%, with {c['completed']} of {c['assigned']} assigned problems completed. The score {trend} from {c['previous_week_score']}% last week. The main areas to improve are {weak}."
-    if any(k in q for k in ["college", "campus", "come today", "came today", "వచ్చ", "today"]):
-        cp = student["campus"]
+        if is_te:
+            return f"{name} coding score ప్రస్తుతం {c['score']} శాతం ఉంది. ఇచ్చిన {c['assigned']} coding problems‌లో {c['completed']} పూర్తి చేశాడు. {weak} పై ఇంకా practice అవసరం ఉంది."
+        return f"{name}'s coding score is {c['score']} percent. {c['completed']} of {c['assigned']} assigned coding problems are complete. The main areas to improve are {weak}."
+
+    if any(k in q for k in ["college", "campus", "today", "వచ్చ"]):
         if cp["present_today"]:
-            return f"Yes. {name} is recorded as present on campus today and entered at {cp['entry_time']}."
+            if is_te:
+                return f"అవును. {name} ఈరోజు college‌కు వచ్చాడు. ఉదయం {cp['entry_time']}కి campus entry నమోదైంది."
+            return f"Yes. {name} is recorded as present today and entered campus at {cp['entry_time']}."
         return f"No campus entry is recorded for {name} today."
-    return (
-        f"{name}'s attendance is {student['attendance']['percentage']}%, training attendance is "
-        f"{student['training']['percentage']}%, and coding score is {student['coding']['score']}%. "
-        f"{student['coding']['completed']} of {student['coding']['assigned']} coding problems are complete."
-    )
+
+    if is_te:
+        return f"{name} overall performance బాగుంది. Attendance {a['percentage']} శాతం ఉంది. Coding score {c['score']} శాతం ఉంది. Training attendance {t['percentage']} శాతం ఉంది."
+    return f"{name}'s attendance is {a['percentage']} percent, training attendance is {t['percentage']} percent, and coding score is {c['score']} percent."
 
 def explain(student: dict, question: str, language: str = "auto"):
     api_key = os.getenv("GEMINI_API_KEY", "").strip()
     if not api_key:
-        return fallback_explanation(student, question), "fallback"
+        return fallback_explanation(student, question, language), "fallback"
 
     try:
         from google import genai
@@ -57,7 +69,7 @@ PARENT_QUESTION: {question}
 STUDENT_DATA:
 {json.dumps(student, ensure_ascii=False)}
 
-Give only the response that should be spoken to the parent.
+Return only the spoken answer for the parent.
 """
         response = client.models.generate_content(
             model=model,
@@ -65,6 +77,6 @@ Give only the response that should be spoken to the parent.
             config={"system_instruction": SYSTEM_INSTRUCTION, "temperature": 0.2},
         )
         text = (response.text or "").strip()
-        return (text or fallback_explanation(student, question)), "gemini"
+        return (text or fallback_explanation(student, question, language)), "gemini"
     except Exception:
-        return fallback_explanation(student, question), "fallback"
+        return fallback_explanation(student, question, language), "fallback"

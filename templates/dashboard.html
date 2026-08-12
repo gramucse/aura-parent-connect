@@ -1,0 +1,84 @@
+\
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AURA Parent Connect v2</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f4f6f8;color:#18212b;margin:0}
+header{background:#111827;color:#fff;padding:22px 28px}
+main{padding:24px;max-width:1200px;margin:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:18px}
+.metric{font-size:30px;font-weight:700;margin-top:6px}
+table{width:100%;border-collapse:collapse;background:#fff}
+th,td{text-align:left;padding:10px;border-bottom:1px solid #e5e7eb;font-size:14px}
+th{background:#f9fafb}
+h2{margin-top:28px}
+.badge{padding:4px 8px;border-radius:999px;background:#eef2ff;font-size:12px}
+.error{background:#fff;padding:30px;border-radius:12px;border:1px solid #e5e7eb}
+small{color:#6b7280}
+</style>
+</head>
+<body>
+<header>
+  <h1 style="margin:0">AURA Parent Connect v2</h1>
+  <small style="color:#cbd5e1">Parent voice support & mentor escalation dashboard</small>
+</header>
+<main>
+{% if not authorized %}
+<div class="error">
+  <h2>Dashboard access requires admin key</h2>
+  <p>Open <code>/dashboard?admin_key=YOUR_ADMIN_KEY</code>.</p>
+</div>
+{% else %}
+<div class="grid">
+  <div class="card"><small>Sessions</small><div class="metric">{{ metrics.sessions }}</div></div>
+  <div class="card"><small>Verified sessions</small><div class="metric">{{ metrics.verified_sessions }}</div></div>
+  <div class="card"><small>Logged events</small><div class="metric">{{ metrics.total_events }}</div></div>
+  <div class="card"><small>Successful events</small><div class="metric">{{ metrics.successful_events }}</div></div>
+  <div class="card"><small>Pending callbacks</small><div class="metric">{{ metrics.callbacks_pending }}</div></div>
+</div>
+
+<h2>Mentor callback requests</h2>
+<table>
+<thead><tr><th>ID</th><th>Student</th><th>Mentor</th><th>Concern</th><th>Status</th><th>Created</th></tr></thead>
+<tbody>
+{% for c in callbacks %}
+<tr>
+<td>{{ c.id }}</td>
+<td>{{ c.student_name }}<br><small>{{ c.student_id }}</small></td>
+<td>{{ c.mentor_name }}</td>
+<td>{{ c.concern }}</td>
+<td><span class="badge">{{ c.status }}</span></td>
+<td>{{ c.created_at }}</td>
+</tr>
+{% else %}
+<tr><td colspan="6">No callback requests yet.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+
+<h2>Recent voice/tool activity</h2>
+<table>
+<thead><tr><th>Call</th><th>Student</th><th>Tool/Event</th><th>Status</th><th>Language</th><th>Time</th></tr></thead>
+<tbody>
+{% for l in logs %}
+<tr>
+<td>{{ l.call_id }}</td>
+<td>{{ l.student_id or "-" }}</td>
+<td>{{ l.tool_name or l.event_type }}</td>
+<td>{{ "Success" if l.success else "Failed" }}</td>
+<td>{{ l.language or "-" }}</td>
+<td>{{ l.created_at }}</td>
+</tr>
+{% else %}
+<tr><td colspan="6">No activity yet.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+</main>
+</body>
+</html>

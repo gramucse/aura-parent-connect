@@ -1,141 +1,122 @@
-# AURA Parent Connect — Demo v0.1
+# AURA Parent Connect v2
 
-A working backend starter for a multilingual AI parent voice agent.
+Version 2 upgrades the working Retell + Gemini demo into a stronger pilot-ready application.
 
-## Demo scope
+## New in v2
 
-- Parent verification
-- Attendance
-- Coding score
-- Problems completed
-- Coding trend / weak areas
-- Training attendance
-- Campus presence and entry time
-- AI-generated parent-friendly explanation
-- Mentor callback request
-- English + Telugu prompt design (Hindi-ready)
+- Retell envelope-compatible tools
+- Gemini-backed parent-friendly explanations
+- Natural Telugu guidance
+- SQLAlchemy database layer
+- SQLite by default, PostgreSQL-ready through `DATABASE_URL`
+- Persistent parent sessions per `call_id`
+- Mentor callback management
+- Call/tool event logging
+- Mentor/admin dashboard
+- Generic Retell webhook logging
+- Separate tool and admin keys
+- Demo student seeding
+- Direct Swagger testing endpoints
 
 ## Architecture
 
-Parent Phone
-→ Retell Voice Agent
-→ AURA FastAPI tools
-→ Demo student data
-→ Gemini Flash for concise explanation
-→ Voice response
+Parent
+→ Retell voice agent
+→ AURA FastAPI v2
+→ Parent/session verification
+→ Student DB / future university APIs
+→ Gemini
+→ voice response
 
-**Important:** student data comes from the database/API. Gemini only explains the data.
+Mentor callback
+→ PostgreSQL/SQLite
+→ dashboard
 
-## 1. Run locally
-
-Python 3.11+ recommended.
+## Run locally
 
 ```bash
 python -m venv .venv
-# Windows:
+# Windows
 .venv\Scripts\activate
-# macOS/Linux:
-# source .venv/bin/activate
 
 pip install -r requirements.txt
 copy .env.example .env
-# macOS/Linux: cp .env.example .env
 
-uvicorn app.main:app --reload
+python -m uvicorn app.main:app --reload
 ```
 
 Open:
+- Docs: http://127.0.0.1:8000/docs
+- Dashboard: http://127.0.0.1:8000/dashboard?admin_key=admin-demo-key
 
-- API docs: `http://127.0.0.1:8000/docs`
-- Health: `http://127.0.0.1:8000/health`
+## Render deployment
 
-The demo still works without a Gemini key using deterministic fallback responses.
+Build command:
 
-## 2. Add Gemini
+```bash
+pip install -r requirements.txt
+```
 
-Create a Gemini API key in Google AI Studio and put it in `.env`:
+Start command:
 
-```env
-GEMINI_API_KEY=your_key
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port $PORT
+```
+
+Environment variables:
+
+```text
+APP_NAME=Aditya University Parent Connect
+GEMINI_API_KEY=<your key>
 GEMINI_MODEL=gemini-2.5-flash
+AURA_TOOL_API_KEY=<new secret>
+DATABASE_URL=sqlite:///./aura_parent_connect_v2.db
+ADMIN_KEY=<new admin secret>
 ```
 
-Restart the server.
+For a real pilot, attach a managed PostgreSQL database and replace `DATABASE_URL`.
 
-## 3. Test sample student
+## PostgreSQL example
 
-Use student:
-
-- ID: `23A91A0501`
-- registered parent mobile ends in: `4582`
-
-Verification:
-
-```bash
-curl -X POST http://127.0.0.1:8000/verify-parent ^
-  -H "Content-Type: application/json" ^
-  -d "{\"student_id\":\"23A91A0501\",\"parent_mobile_last4\":\"4582\"}"
+```text
+DATABASE_URL=postgresql+psycopg://USER:PASSWORD@HOST:5432/DBNAME
 ```
 
-Explain:
+## Retell
 
-```bash
-curl -X POST http://127.0.0.1:8000/student/explain ^
-  -H "Content-Type: application/json" ^
-  -d "{\"student_id\":\"23A91A0501\",\"question\":\"How is my son's coding?\",\"language\":\"en\"}"
+Paste `retell/AGENT_PROMPT_V2.txt` into the agent prompt.
+
+Configure the four functions from `retell/TOOLS_V2.md`.
+
+## Demo record
+
+Student ID: `23A91A0501`
+Parent mobile last 4: `4582`
+
+## Dashboard
+
+Open:
+
+```text
+https://YOUR-APP.onrender.com/dashboard?admin_key=YOUR_ADMIN_KEY
 ```
 
-## 4. Expose backend over HTTPS
+The dashboard shows:
+- total sessions
+- verified sessions
+- tool events
+- pending callbacks
+- callback list
+- recent call/tool activity
 
-Retell must be able to call your backend.
+## Before production
 
-For a quick demo, deploy to Cloud Run / Render / Railway or use a secure HTTPS tunnel.
-
-Set a strong value in `.env`:
-
-```env
-AURA_TOOL_API_KEY=a-long-random-demo-secret
-```
-
-## 5. Configure Retell
-
-1. Create a voice agent.
-2. Paste `retell/AGENT_PROMPT.txt` as the agent prompt.
-3. Add the 4 custom functions described in `retell/TOOLS.md`.
-4. Add `X-AURA-API-Key` to each function.
-5. Bind the agent to an inbound number or use Retell's web-call test first.
-6. Call and test:
-   - "How is my son's performance?"
-   - "How is his coding?"
-   - "Did he come to college today?"
-   - "Please ask his mentor to call me."
-
-Retell supports custom functions that call external APIs during a conversation. Its inbound-call flow can bind a voice agent to a number, and `{{user_number}}` can represent the caller number.
-
-## 6. Demo data
-
-Edit `data/students.json`.
-
-For the chairman demo, use fictional/demo records unless you have formal approval to use real student/parent data.
-
-## 7. Production upgrades
-
-Before real parent deployment:
-
-- Replace JSON with PostgreSQL / university API gateway
-- Strong authentication / OTP for sensitive information
-- Encrypt data in transit and at rest
-- Role/access controls
-- Audit logs
-- Consent and privacy notice
-- Retention policy for transcripts/recordings
-- API rate limiting
-- Webhook signature verification
-- Proper Indian telephony/SIP integration
-- Human escalation
-- Monitoring and failure alerts
-- Separate factual APIs from AI-generated explanations
-
-## API rule
-
-**AURA/Gemini may explain a fact, but may never manufacture a student fact.**
+- Use PostgreSQL
+- Add OTP for sensitive information
+- Verify Retell webhook signatures
+- Add proper authorization/roles for dashboard
+- Encrypt and minimize PII
+- Define transcript/recording retention
+- Connect university APIs instead of demo tables
+- Load-test concurrent calls
+- Add monitoring and alerting
