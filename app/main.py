@@ -10,6 +10,7 @@ from .models import (
     RetellToolRequest,
     RetellEnvelope,
 )
+
 from .store import (
     get_student,
     verify_parent,
@@ -110,27 +111,114 @@ def tool_verify_parent(payload: RetellEnvelope, x_aura_api_key: str | None = Hea
     }
 
 @app.post("/tools/student-summary")
-def tool_student_summary(payload: RetellToolRequest, x_aura_api_key: str | None = Header(default=None)):
+def tool_student_summary(
+    payload: RetellEnvelope,
+    x_aura_api_key: str | None = Header(default=None)
+):
     require_tool_key(x_aura_api_key)
-    student = get_student(payload.student_id)
+
+    data = payload.args or {}
+    student_id = data.get("student_id")
+
+    if not student_id:
+        return {
+            "found": False,
+            "message": "Student registration number was not received."
+        }
+
+    student = get_student(student_id)
+
     if not student:
-        return {"found": False, "message": "Student record not found."}
-    return {"found": True, "student": safe_summary(student)}
+        return {
+            "found": False,
+            "message": "Student record not found."
+        }
+
+    return {
+        "found": True,
+        "student": safe_summary(student)
+    }
 
 @app.post("/tools/explain")
-def tool_explain(payload: RetellToolRequest, x_aura_api_key: str | None = Header(default=None)):
+def tool_explain(
+    payload: RetellEnvelope,
+    x_aura_api_key: str | None = Header(default=None)
+):
     require_tool_key(x_aura_api_key)
-    student = get_student(payload.student_id)
+
+    data = payload.args or {}
+
+    student_id = data.get("student_id")
+    question = data.get(
+        "question",
+        "Give an overall performance summary."
+    )
+    language = data.get("language", "auto")
+
+    if not student_id:
+        return {
+            "found": False,
+            "answer": "Student registration number was not received."
+        }
+
+    student = get_student(student_id)
+
     if not student:
-        return {"found": False, "answer": "Student record not found."}
-    answer, engine = explain(safe_summary(student), payload.question or "Give an overall performance summary.", payload.language)
-    return {"found": True, "answer": answer, "engine": engine}
+        return {
+            "found": False,
+            "answer": "Student record not found."
+        }
+
+    answer, engine = explain(
+        safe_summary(student),
+        question,
+        language
+    )
+
+    return {
+        "found": True,
+        "answer": answer,
+        "engine": engine
+    }
 
 @app.post("/tools/request-callback")
-def tool_request_callback(payload: RetellToolRequest, x_aura_api_key: str | None = Header(default=None)):
+def tool_request_callback(
+    payload: RetellEnvelope,
+    x_aura_api_key: str | None = Header(default=None)
+):
     require_tool_key(x_aura_api_key)
-    student = get_student(payload.student_id)
+
+    data = payload.args or {}
+
+    student_id = data.get("student_id")
+    concern = data.get(
+        "concern",
+        "Parent requested mentor callback"
+    )
+    caller_number = data.get("caller_number")
+
+    if not student_id:
+        return {
+            "created": False,
+            "message": "Student registration number was not received."
+        }
+
+    student = get_student(student_id)
+
     if not student:
-        return {"created": False, "message": "Student record not found."}
-    item = create_callback(student, payload.concern or "Parent requested mentor callback", payload.caller_number)
-    return {"created": True, "message": f"Callback request created for mentor {student['mentor']['name']}.", "callback": item}
+        return {
+            "created": False,
+            "message": "Student record not found."
+        }
+
+    item = create_callback(
+        student,
+        concern,
+        caller_number
+    )
+
+    return {
+        "created": True,
+        "message": f"Callback request created for mentor {student['mentor']['name']}.",
+        "callback": item
+    }
