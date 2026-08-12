@@ -1,0 +1,31 @@
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Student</title>
+<style>body{font-family:Arial;background:#f4f6f8;margin:0;color:#18212b}header{background:#111827;color:#fff;padding:22px 28px}
+main{max-width:900px;margin:auto;padding:24px}.card{background:#fff;padding:20px;border-radius:12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+label{display:block;font-size:13px;font-weight:bold;margin-bottom:4px}input{width:100%;box-sizing:border-box;padding:9px}.full{grid-column:1/-1}
+button,.btn{background:#111827;color:#fff;padding:10px 14px;border:0;border-radius:8px;text-decoration:none}@media(max-width:700px){.grid{grid-template-columns:1fr}}</style></head>
+<body><header><h1 style="margin:0">{{"Edit Student" if mode=="edit" else "Add Student"}}</h1></header><main><div class="card">
+<form method="post" action="/students/save"><input type="hidden" name="admin_key" value="{{admin_key}}"><div class="grid">
+<div><label>Student ID</label><input name="student_id" required value="{{student.student_id if student else ''}}" {% if mode=="edit" %}readonly{% endif %}></div>
+<div><label>Student Name</label><input name="student_name" required value="{{student.student_name if student else ''}}"></div>
+<div><label>Parent Name</label><input name="parent_name" required value="{{student.parent_name if student else ''}}"></div>
+<div><label>Parent Mobile</label><input name="parent_mobile" required value="{{student.parent_mobile if student else ''}}"></div>
+<div><label>Mentor</label><input name="mentor_name" required value="{{student.mentor_name if student else ''}}"></div>
+<div><label>Attendance %</label><input type="number" min="0" max="100" name="attendance_percentage" value="{{student.attendance_percentage if student else 0}}"></div>
+<div><label>Attendance Attended</label><input type="number" name="attendance_attended" value="{{student.attendance_attended if student else 0}}"></div>
+<div><label>Attendance Held</label><input type="number" name="attendance_held" value="{{student.attendance_held if student else 0}}"></div>
+<div><label>Coding Score %</label><input type="number" min="0" max="100" name="coding_score" value="{{student.coding_score if student else 0}}"></div>
+<div><label>Coding Assigned</label><input type="number" name="coding_assigned" value="{{student.coding_assigned if student else 0}}"></div>
+<div><label>Coding Completed</label><input type="number" name="coding_completed" value="{{student.coding_completed if student else 0}}"></div>
+<div><label>Previous Week Score</label><input type="number" name="coding_previous_week" value="{{student.coding_previous_week if student else 0}}"></div>
+<div class="full"><label>Strong Topics (use |)</label><input name="strong_topics" value="{{student.strong_topics|join('|') if student else ''}}"></div>
+<div class="full"><label>Weak Topics (use |)</label><input name="weak_topics" value="{{student.weak_topics|join('|') if student else ''}}"></div>
+<div><label>Training %</label><input type="number" min="0" max="100" name="training_percentage" value="{{student.training_percentage if student else 0}}"></div>
+<div><label>Training Attended</label><input type="number" name="training_attended" value="{{student.training_attended if student else 0}}"></div>
+<div><label>Training Held</label><input type="number" name="training_held" value="{{student.training_held if student else 0}}"></div>
+<div><label>Campus Regularity %</label><input type="number" min="0" max="100" name="campus_regularity_score" value="{{student.campus_regularity_score if student else 0}}"></div>
+<div><label>Entry Time</label><input name="entry_time" value="{{student.entry_time if student and student.entry_time else ''}}"></div>
+<div><label>Previous Day Entry</label><input name="previous_day_entry_time" value="{{student.previous_day_entry_time if student and student.previous_day_entry_time else ''}}"></div>
+<div><label><input style="width:auto" type="checkbox" name="present_today" {% if student and student.present_today %}checked{% endif %}> Present Today</label></div>
+</div><br><button>Save Student</button> <a class="btn" href="/students?admin_key={{admin_key}}">Back</a></form>
+</div></main></body></html>

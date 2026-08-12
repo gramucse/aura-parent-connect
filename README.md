@@ -1,122 +1,72 @@
-# AURA Parent Connect v2
+# AURA Parent Connect v2.1
 
-Version 2 upgrades the working Retell + Gemini demo into a stronger pilot-ready application.
+## What is new
+- Student Management page
+- Search students
+- Add and edit students
+- Downloadable CSV template
+- Bulk CSV upload
+- Insert/update based on student_id
+- Validation report
+- PostgreSQL ready
+- Existing Retell + Gemini tools preserved
+- Mentor dashboard and callbacks preserved
 
-## New in v2
-
-- Retell envelope-compatible tools
-- Gemini-backed parent-friendly explanations
-- Natural Telugu guidance
-- SQLAlchemy database layer
-- SQLite by default, PostgreSQL-ready through `DATABASE_URL`
-- Persistent parent sessions per `call_id`
-- Mentor callback management
-- Call/tool event logging
-- Mentor/admin dashboard
-- Generic Retell webhook logging
-- Separate tool and admin keys
-- Demo student seeding
-- Direct Swagger testing endpoints
-
-## Architecture
-
-Parent
-→ Retell voice agent
-→ AURA FastAPI v2
-→ Parent/session verification
-→ Student DB / future university APIs
-→ Gemini
-→ voice response
-
-Mentor callback
-→ PostgreSQL/SQLite
-→ dashboard
-
-## Run locally
-
+## Local run
 ```bash
 python -m venv .venv
-# Windows
 .venv\Scripts\activate
-
 pip install -r requirements.txt
 copy .env.example .env
-
 python -m uvicorn app.main:app --reload
 ```
 
 Open:
 - Docs: http://127.0.0.1:8000/docs
-- Dashboard: http://127.0.0.1:8000/dashboard?admin_key=admin-demo-key
+- Dashboard: http://127.0.0.1:8000/dashboard?admin_key=YOUR_ADMIN_KEY
+- Students: http://127.0.0.1:8000/students?admin_key=YOUR_ADMIN_KEY
 
-## Render deployment
-
-Build command:
-
+## Render
+Build:
 ```bash
 pip install -r requirements.txt
 ```
 
-Start command:
-
+Start:
 ```bash
 uvicorn app.main:app --host 0.0.0.0 --port $PORT
 ```
 
-Environment variables:
-
+Environment:
 ```text
 APP_NAME=Aditya University Parent Connect
 GEMINI_API_KEY=<your key>
 GEMINI_MODEL=gemini-2.5-flash
-AURA_TOOL_API_KEY=<new secret>
-DATABASE_URL=sqlite:///./aura_parent_connect_v2.db
-ADMIN_KEY=<new admin secret>
+AURA_TOOL_API_KEY=<your Retell tool secret>
+ADMIN_KEY=<your admin secret>
+DATABASE_URL=sqlite:///./aura_parent_connect_v2_1.db
 ```
 
-For a real pilot, attach a managed PostgreSQL database and replace `DATABASE_URL`.
-
-## PostgreSQL example
-
+For PostgreSQL:
 ```text
 DATABASE_URL=postgresql+psycopg://USER:PASSWORD@HOST:5432/DBNAME
 ```
 
-## Retell
+## CSV Upload
+1. Open `/students?admin_key=YOUR_ADMIN_KEY`
+2. Download CSV Template
+3. Open it in Excel
+4. Keep column names unchanged
+5. Add one student per row
+6. Save as CSV UTF-8
+7. Upload it
+8. Review Inserted / Updated / Rejected counts
 
-Paste `retell/AGENT_PROMPT_V2.txt` into the agent prompt.
-
-Configure the four functions from `retell/TOOLS_V2.md`.
-
-## Demo record
-
-Student ID: `23A91A0501`
-Parent mobile last 4: `4582`
-
-## Dashboard
-
-Open:
-
+Strong and weak topics use `|`:
 ```text
-https://YOUR-APP.onrender.com/dashboard?admin_key=YOUR_ADMIN_KEY
+Arrays|Strings|Hashing
+Dynamic Programming|Graphs
 ```
 
-The dashboard shows:
-- total sessions
-- verified sessions
-- tool events
-- pending callbacks
-- callback list
-- recent call/tool activity
-
-## Before production
-
-- Use PostgreSQL
-- Add OTP for sensitive information
-- Verify Retell webhook signatures
-- Add proper authorization/roles for dashboard
-- Encrypt and minimize PII
-- Define transcript/recording retention
-- Connect university APIs instead of demo tables
-- Load-test concurrent calls
-- Add monitoring and alerting
+## Important
+For a real pilot, use PostgreSQL. SQLite on a normal Render web-service filesystem should be treated as demo storage.

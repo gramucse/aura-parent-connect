@@ -1,0 +1,28 @@
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Student Management</title><style>
+body{font-family:Arial;background:#f4f6f8;margin:0;color:#18212b}header{background:#111827;color:#fff;padding:22px 28px}
+main{max-width:1250px;margin:auto;padding:24px}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+input{padding:10px;border:1px solid #d1d5db;border-radius:8px}.btn,button{background:#111827;color:#fff;border:0;padding:10px 14px;border-radius:8px;text-decoration:none;cursor:pointer}
+.secondary{background:#fff;color:#111827;border:1px solid #d1d5db}.card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:18px;margin-bottom:18px}
+table{width:100%;border-collapse:collapse;background:#fff}th,td{padding:10px;border-bottom:1px solid #e5e7eb;text-align:left;font-size:14px}th{background:#f9fafb}
+.msg{padding:10px;background:#ecfdf5;border-radius:8px;margin-bottom:12px}</style></head>
+<body><header><h1 style="margin:0">Student Management</h1></header><main>
+{% if message %}<div class="msg">{{message}}</div>{% endif %}
+<div class="toolbar">
+<form method="get" action="/students"><input type="hidden" name="admin_key" value="{{admin_key}}">
+<input name="q" value="{{q}}" placeholder="Search student / ID / parent / mentor"><button>Search</button></form>
+<a class="btn" href="/students/new?admin_key={{admin_key}}">+ Add Student</a>
+<a class="btn secondary" href="/students/template.csv?admin_key={{admin_key}}">Download CSV Template</a>
+<a class="btn secondary" href="/dashboard?admin_key={{admin_key}}">Dashboard</a>
+</div>
+<div class="card"><h3>Bulk CSV Upload</h3>
+<form action="/students/upload" method="post" enctype="multipart/form-data">
+<input type="hidden" name="admin_key" value="{{admin_key}}"><input type="file" name="file" accept=".csv" required>
+<button>Upload Students</button></form><p><small>Same student ID = update. New student ID = insert.</small></p></div>
+<table><tr><th>ID</th><th>Student</th><th>Parent</th><th>Mentor</th><th>Attendance</th><th>Coding</th><th>Training</th><th>Campus</th><th></th></tr>
+{% for s in students %}<tr><td>{{s.student_id}}</td><td>{{s.student_name}}</td><td>{{s.parent_name}}<br><small>{{s.parent_mobile}}</small></td>
+<td>{{s.mentor_name}}</td><td>{{s.attendance_percentage}}%</td><td>{{s.coding_score}}%</td><td>{{s.training_percentage}}%</td>
+<td>{{"Present" if s.present_today else "Not recorded"}}</td><td><a href="/students/{{s.student_id}}/edit?admin_key={{admin_key}}">Edit</a></td></tr>
+{% else %}<tr><td colspan="9">No students found.</td></tr>{% endfor %}</table>
+</main></body></html>

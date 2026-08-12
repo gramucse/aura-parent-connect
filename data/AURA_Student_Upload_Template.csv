@@ -1,0 +1,2 @@
+﻿student_id,student_name,parent_name,parent_mobile,mentor_name,attendance_percentage,attendance_attended,attendance_held,coding_score,coding_assigned,coding_completed,coding_previous_week,strong_topics,weak_topics,training_percentage,training_attended,training_held,present_today,entry_time,previous_day_entry_time,campus_regularity_score
+23A91A0501,Rahul Kumar,Suresh Kumar,+919876544582,M. Ashok,91,109,120,76,50,38,68,Arrays|Strings,Dynamic Programming|Graphs,94,47,50,true,09:12 AM,09:26 AM,95

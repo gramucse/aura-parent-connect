@@ -55,5 +55,34 @@
     "entry_time": "09:31 AM",
     "previous_day_entry_time": "09:18 AM",
     "campus_regularity_score": 87
+  },
+  {
+    "student_id": "23A91A0503",
+    "student_name": "Kiran Reddy",
+    "parent_name": "Ramesh Reddy",
+    "parent_mobile": "+919811112222",
+    "mentor_name": "G. Durga Sai Prasad",
+    "attendance_percentage": 73,
+    "attendance_attended": 88,
+    "attendance_held": 120,
+    "coding_score": 58,
+    "coding_assigned": 50,
+    "coding_completed": 26,
+    "coding_previous_week": 54,
+    "strong_topics": [
+      "Basic Arrays"
+    ],
+    "weak_topics": [
+      "Two Pointers",
+      "Recursion",
+      "Dynamic Programming"
+    ],
+    "training_percentage": 76,
+    "training_attended": 38,
+    "training_held": 50,
+    "present_today": false,
+    "entry_time": null,
+    "previous_day_entry_time": "09:44 AM",
+    "campus_regularity_score": 74
   }
 ]
