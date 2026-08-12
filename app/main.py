@@ -75,10 +75,7 @@ def api_callback(payload: CallbackRequest):
 # Protect these with X-AURA-API-Key. Configure the same header in Retell.
 
 @app.post("/tools/verify-parent")
-def tool_verify_parent(
-    payload: RetellEnvelope,
-    x_aura_api_key: str | None = Header(default=None)
-):
+def tool_verify_parent(payload: RetellEnvelope, x_aura_api_key: str | None = Header(default=None)):
     require_tool_key(x_aura_api_key)
 
     data = payload.args
