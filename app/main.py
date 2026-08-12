@@ -211,8 +211,14 @@ def dashboard(request: Request, admin_key: str | None = None, db: Session = Depe
     expected = os.getenv("ADMIN_KEY", "admin-demo-key")
     if expected and admin_key != expected:
         return templates.TemplateResponse(
-            "dashboard.html",
-            {"request": request, "authorized": False, "metrics": {}, "callbacks": [], "logs": []},
+            request=request,
+            name="dashboard.html",
+            context={
+                "authorized": False,
+                "metrics": {},
+                "callbacks": [],
+                "logs": []
+            },
             status_code=401,
         )
 
@@ -220,8 +226,14 @@ def dashboard(request: Request, admin_key: str | None = None, db: Session = Depe
     callbacks = db.execute(select(MentorCallback).order_by(MentorCallback.created_at.desc()).limit(50)).scalars().all()
     logs = db.execute(select(CallLog).order_by(CallLog.created_at.desc()).limit(80)).scalars().all()
     return templates.TemplateResponse(
-        "dashboard.html",
-        {"request": request, "authorized": True, "metrics": metrics, "callbacks": callbacks, "logs": logs}
+    request=request,
+    name="dashboard.html",
+    context={
+        "authorized": True,
+        "metrics": metrics,
+        "callbacks": callbacks,
+        "logs": logs
+    }
     )
 
 @app.post("/admin/callbacks/{callback_id}/status")
